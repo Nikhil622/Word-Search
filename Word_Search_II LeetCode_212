@@ -1,0 +1,65 @@
+class Solution {
+public:
+    bool isValid(int x,int y,vector<vector<bool>>&visited)
+    {
+        return (x>=0 && x<visited.size() && y>=0 && y<visited[0].size() && visited[x][y]==false);
+    }
+    bool fun(int idx,int x,int y,string&word,vector<vector<char>>& grid,vector<vector<bool>>&visited)
+    {  if(idx==word.size() || idx==word.size()-1 && word[idx]==grid[x][y])
+        {  return true; }
+        if(grid[x][y]!=word[idx])
+             return false;
+        static int a[]={0,0,-1,1};
+        static int b[]={-1,1,0,0};
+        visited[x][y]=true;
+        for(int k=0;k<4;++k)
+        {  if(isValid(x+a[k],y+b[k],visited)==true)
+            {  bool t=fun(idx+1,x+a[k],y+b[k],word,grid,visited);
+               if(t==true)
+               {  visited[x][y]=false;
+                   return true; 
+               }
+            }
+        }
+       visited[x][y]=false;
+       return false;
+    }
+    vector<string> findWords(vector<vector<char>>& grid, vector<string>& words) {
+        int m=grid.size(),n=grid[0].size();
+        vector<vector<bool>>visited(m,vector<bool>(n,false));
+        vector<string>res;
+        unordered_map<char,vector<pair<int,int>>>mp;
+        for(int i=0;i<m;++i)
+            {  for(int j=0;j<n;++j)
+                 mp[grid[i][j]].push_back({i,j});
+            }
+        for(int k=0;k<words.size();++k)
+        {  auto x=mp[words[k][0]];
+           for(auto p:x)
+           {  if(fun(0,p.first,p.second,words[k],grid,visited)==true)
+               {  res.push_back(words[k]);
+                  break;
+               }
+           }
+        }
+        return res;
+    }
+};
+
+// for(int k=0;k<words.size();++k)   // it will take O(m*n) time we can optimize it using unordered_map in above solution
+//         {   bool x=false;
+//             for(int i=0;i<m;++i)
+//             {  
+//                 for(int j=0;j<n;++j)
+//                 {  if(grid[i][j]==words[k][0])
+//                     {  if(fun(0,i,j,words[k],grid,visited)==true)
+//                         {  res.push_back(words[k]);
+//                            x=true;
+//                            break;
+//                         }
+//                     } 
+//                 }
+//                if(x==true)
+//                    break;
+//             }
+//         }
