@@ -1,0 +1,40 @@
+class Solution {
+public:
+    bool isValid(int x,int y,vector<vector<bool>>& visited)
+    {
+        return (x>=0 && x<visited.size() && y>=0 && y<visited[0].size() && visited[x][y]==false);
+    }
+    bool fun(int idx,int x,int y, string &word,vector<vector<char>>& grid,vector<vector<bool>>& visited)
+    {     if(idx==word.size() || (idx==word.size()-1 && grid[x][y]==word[idx]))
+            return true;
+          static int a[]={0,0,-1,1};
+          static int b[]={-1,1,0,0};
+          if(grid[x][y]!=word[idx])
+              return false;
+          visited[x][y]=true;
+          for(int k=0;k<4;++k)
+          {  if(isValid(x+a[k],y+b[k],visited)==true) 
+              {  
+                 if(fun(idx+1,x+a[k],y+b[k],word,grid,visited)==true)
+                     return true;
+              }
+          }
+        visited[x][y]=false;
+        return false;
+    }
+    bool exist(vector<vector<char>>& grid, string &word) {
+        int m=grid.size(),n=grid[0].size();
+        vector<vector<bool>>visited(m,vector<bool>(n,false));
+        for(int i=0;i<m;++i)
+        {
+            for(int j=0;j<n;++j)
+            {  if(grid[i][j]==word[0])
+                {  bool x=fun(0,i,j,word,grid,visited);
+                   if(x==true)
+                       return true;
+                }
+            }
+        }
+        return false;
+    }
+};
